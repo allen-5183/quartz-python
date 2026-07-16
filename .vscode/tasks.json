@@ -1,0 +1,22 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Auto Terminal",
+            "type": "process", // 改用 process 模式
+            "command": "cmd.exe",
+            "args": [
+                "/k",
+                "cd /d C:\\cloud\\project\\quartz-python && echo 環境初始化成功"
+            ],
+            "presentation": {
+                "panel": "new",
+                "reveal": "always",
+                "focus": true
+            },
+            "runOptions": {
+                "runOn": "folderOpen"
+            }
+        }
+    ]
+}

@@ -1,0 +1,228 @@
+@use "./variables.scss" as *;
+
+// ============================================================================
+// Custom Fonts Configuration
+// ============================================================================
+:root {
+  --headerFont: "Taipei Sans TC", "Noto Sans TC", sans-serif !important;
+  --bodyFont: "Noto Sans TC", sans-serif !important;
+  --codeFont: "JetBrains Mono", monospace !important;
+  --font-monospace: "JetBrains Mono", monospace !important;
+}
+
+// 強制覆寫外部主題外掛 (如 Dracula) 寫死的高權重 CSS 規則
+html body {
+  font-family: var(--bodyFont) !important;
+}
+
+h1, h2, h3, h4, h5, h6,
+html body h1, html body h2, html body h3, html body h4, html body h5, html body h6 {
+  font-family: var(--headerFont) !important;
+}
+
+html body code, html body pre, code, pre, .math {
+  font-family: var(--codeFont) !important;
+}
+
+// put your custom CSS here!
+
+// ============================================================================
+// Sidebar Resize Handles
+// ============================================================================
+
+// The sidebar containers need position: relative so the handles
+// can be absolutely positioned at the edges.
+.sidebar.left,
+.sidebar.right {
+  position: sticky; // keep sticky for scroll behavior, also establishes containing block
+}
+
+.sidebar-resize-handle {
+  position: absolute;
+  top: 0;
+  width: 6px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 10;
+  transition: background-color 0.2s ease;
+  user-select: none;
+  touch-action: none;
+
+  // Invisible by default, becomes visible on hover
+  background-color: transparent;
+
+  // Hide on mobile/tablet — sidebars stack vertically so resize doesn't apply
+  @media all and ($mobile) {
+    display: none;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 40px;
+    border-radius: 2px;
+    background-color: transparent;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+    opacity: 0;
+  }
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--secondary) 30%, transparent);
+
+    &::after {
+      background-color: var(--secondary);
+      opacity: 0.8;
+    }
+  }
+
+  &.is-dragging {
+    background-color: color-mix(in srgb, var(--secondary) 50%, transparent);
+
+    &::after {
+      background-color: var(--secondary);
+      opacity: 1;
+    }
+  }
+}
+
+// Left handle sits on the right edge of the left sidebar
+.sidebar.left .sidebar-resize-handle {
+  right: -3px;
+
+  &::after {
+    right: 1px;
+  }
+}
+
+// Right handle sits on the left edge of the right sidebar
+.sidebar.right .sidebar-resize-handle {
+  left: -3px;
+
+  &::after {
+    left: 1px;
+  }
+}
+
+// Overlay to prevent text selection and iframe capture during drag
+body.sidebar-resizing {
+  cursor: col-resize !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+
+  * {
+    cursor: col-resize !important;
+  }
+
+  iframe {
+    pointer-events: none;
+  }
+}
+
+// ============================================================================
+// Full Width Layout & Sidebar Alignment
+// ============================================================================
+
+// Make the main page container take up the full screen width
+.page {
+  max-width: 100%;
+}
+
+// Override the default centered grid to stretch across the full width.
+// This ensures sidebars are pinned to the screen edges and the center takes the rest.
+.page > #quartz-body {
+  width: 100% !important;
+  max-width: 100% !important;
+  grid-template-columns: var(--left-sidebar-width, 320px) 1fr var(--right-sidebar-width, 320px) !important;
+}
+
+// Restrict the maximum width of the center content for readability (like Obsidian's readable line length)
+.page > #quartz-body .center > * {
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+// Adjust padding so content isn't completely flush against the window edges
+.page > #quartz-body .sidebar.left {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  border-right: none !important;
+}
+
+.page > #quartz-body .sidebar.right {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  border-left: none !important;
+}
+
+// ============================================================================
+// Table of Contents Collapse Fix
+// ============================================================================
+
+// 預設的 Quartz CSS 會將摺疊後的 TOC 高度硬限制在 1.4rem (約 22.4px)。
+// 但全域的 h3 margin 設定會使得標題高度大於 22.4px，導致文字被完全裁切消失。
+// 解法：取消外層的固定高度限制，改為直接將內容清單隱藏，並重置 h3 的 margin。
+.toc {
+  &:has(button.toc-header.collapsed) {
+    flex: none !important;
+    height: auto !important;
+  }
+}
+
+ul.toc-content.collapsed {
+  display: none !important;
+}
+
+button.toc-header h3 {
+  margin: 0 !important;
+}
+
+// ============================================================================
+// Custom Scrollbar (Obsidian Style)
+// ============================================================================
+
+// 將預設醜陋的 Windows 白色捲軸改為細緻的暗色捲軸，消除突兀的白線
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: color-mix(in srgb, var(--gray) 50%, transparent);
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--gray);
+}
+
+// ============================================================================
+// Image Width Control via URL Hash (#w10 ~ #w100)
+// 支援 Obsidian/HackMD 風格圖片縮放語法
+// 用法：![](圖片網址#w50) → 圖片顯示為 50% 寬度
+// ============================================================================
+
+.center article {
+  img[src*="#w100"] { width: 100%; height: auto; }
+  img[src*="#w90"]  { width: 90%;  height: auto; }
+  img[src*="#w80"]  { width: 80%;  height: auto; }
+  img[src*="#w70"]  { width: 70%;  height: auto; }
+  img[src*="#w60"]  { width: 60%;  height: auto; }
+  img[src*="#w50"]  { width: 50%;  height: auto; }
+  img[src*="#w40"]  { width: 40%;  height: auto; }
+  img[src*="#w30"]  { width: 30%;  height: auto; }
+  img[src*="#w20"]  { width: 20%;  height: auto; }
+  img[src*="#w10"]  { width: 10%;  height: auto; }
+}
