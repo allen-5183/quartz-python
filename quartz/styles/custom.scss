@@ -231,17 +231,17 @@ button.toc-header h3 {
 // Note Properties Fix
 // ============================================================================
 .note-properties-table {
-  table-layout: auto !important;
+  table-layout: fixed !important;
 }
 
 .note-properties-table .note-properties-key {
-  width: auto !important;
-  min-width: 120px;
-  word-break: normal;
-  white-space: nowrap;
+  width: 120px !important;
+  word-break: keep-all !important;
+  white-space: nowrap !important;
 }
 
 .note-properties-table .note-properties-value {
-  word-break: break-word;
-  word-wrap: anywhere;
+  width: auto !important;
+  word-break: break-word !important;
+  white-space: normal !important;
 }

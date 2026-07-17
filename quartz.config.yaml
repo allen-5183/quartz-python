@@ -255,7 +255,7 @@ plugins:
         - date
       excludedProperties: []
       hidePropertiesView: false
-      collapsed: true
+      collapsed: false
       delimiters: ---
       language: yaml
     order: 5
