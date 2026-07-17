@@ -252,6 +252,7 @@ plugins:
         - description
         - tags
         - aliases
+        - date
       excludedProperties: []
       hidePropertiesView: false
       delimiters: ---

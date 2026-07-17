@@ -226,3 +226,13 @@ button.toc-header h3 {
   img[src*="#w20"]  { width: 20%;  height: auto; }
   img[src*="#w10"]  { width: 10%;  height: auto; }
 }
+
+// ============================================================================
+// Note Properties Fix
+// ============================================================================
+.note-properties-table .note-properties-key {
+  width: max-content;
+  min-width: 120px;
+  word-break: normal;
+  white-space: nowrap;
+}
