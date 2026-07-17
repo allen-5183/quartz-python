@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=./quartz/plugins/quartz-plugins.schema.json
 configuration:
-  pageTitle: Allen 教學
+  pageTitle: Python 教學
   pageTitleSuffix: ""
   enableSPA: false
   enablePopovers: true
