@@ -172,7 +172,7 @@ function renderTagList(tags: string[], ctx: RenderCtx): preact.JSX.Element {
 }
 
 export default ((opts?: NotePropertiesComponentOptions) => {
-  const { collapsed = false } = opts ?? {};
+  const { collapsed = true } = opts ?? {};
 
   const Component: QuartzComponent = (props: QuartzComponentProps) => {
     const noteProps = props.fileData?.noteProperties as
