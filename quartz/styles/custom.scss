@@ -246,3 +246,24 @@ button.toc-header h3 {
   white-space: normal !important;
   word-break: normal !important;
 }
+
+// ============================================================================
+// Markdown Table Style Improvements (表格直線與排版優化)
+// ============================================================================
+.table-container > table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0 !important;
+  
+  th, td {
+    border: 1px solid var(--lightgray) !important; /* 畫出垂直與水平格線 */
+    padding: 0.6rem 1rem !important; /* 增加文字與格線的距離，避免擁擠 */
+    word-break: normal !important; /* 避免中文字被過度切斷 */
+    min-width: 100px; /* 確保每一格有基本寬度 */
+  }
+  
+  th {
+    background-color: color-mix(in srgb, var(--lightgray) 30%, transparent); /* 表頭加上淺色背景方便辨識 */
+    font-weight: 600;
+  }
+}

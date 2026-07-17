@@ -10843,7 +10843,7 @@ function renderTagList(tags, ctx) {
   return /* @__PURE__ */ u2("span", { class: "note-properties-tags", children: items });
 }
 var NoteProperties_default = ((opts) => {
-  const { collapsed = false } = opts ?? {};
+  const { collapsed = true } = opts ?? {};
   const Component = (props) => {
     const noteProps = props.fileData?.noteProperties;
     if (!noteProps) return null;
