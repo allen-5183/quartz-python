@@ -232,16 +232,17 @@ button.toc-header h3 {
 // ============================================================================
 .note-properties-table {
   table-layout: fixed !important;
+  width: 100% !important;
 }
 
 .note-properties-table .note-properties-key {
   width: 120px !important;
-  word-break: keep-all !important;
   white-space: nowrap !important;
+  word-break: normal !important;
 }
 
 .note-properties-table .note-properties-value {
   width: auto !important;
-  word-break: break-word !important;
   white-space: normal !important;
+  word-break: normal !important;
 }
