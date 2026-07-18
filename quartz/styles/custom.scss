@@ -11,9 +11,6 @@
 //       兩者視覺重量高度吻合，是業界公認的中英混排最佳解。
 // ============================================================================
 
-// Google Fonts 載入：Inter（英文/UI）+ Noto Sans TC（繁體中文）
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
 :root {
   // 標題：Inter 負責英文，Noto Sans TC 負責中文，其後系統字型保底
   --headerFont: "Inter", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei",
@@ -316,4 +313,4 @@ button.toc-header h3 {
     background-color: color-mix(in srgb, var(--lightgray) 30%, transparent); /* 表頭加上淺色背景方便辨識 */
     font-weight: 600;
   }
-
+}
