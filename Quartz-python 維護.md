@@ -128,3 +128,22 @@
    # Prevent plugin .git dirs from being treated as submodules
    .quartz/plugins/**/.git
    ```
+
+
+---
+
+## 字體最佳化
+
+| 項目 | 修改前 | 修改後 |
+| :--- | :--- | :--- |
+| **英文/數字字體** | Noto Sans TC（中文字體兼顧英文，非最佳） | **Inter**（專為 UI/閱讀優化的英文字體） |
+| **中文字體** | Noto Sans TC | **Noto Sans TC**（保留，補足中文字形） |
+| **不存在的字體** | `"Taipei Sans TC"`（Google Fonts 無此字體） | 已移除 |
+| **系統備援** | 無 | `PingFang TC` (Mac) / `Microsoft JhengHei` (Windows) |
+| **行高** | 未設定（沿用瀏覽器預設） | 內文 `1.8`、標題 `1.3` |
+| **字距** | 未設定 | 內文 `0.01em`、標題 `0.02em` |
+| **字體渲染** | 未設定 | `antialiased` + `optimizeLegibility` |
+| **程式連字** | 未開啟 | 開啟（`->`, `=>`, `!=` 等自動合字） |
+
+修改 `quartz\styles\custom.scss`
+

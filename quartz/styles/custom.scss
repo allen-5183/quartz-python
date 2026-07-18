@@ -2,26 +2,76 @@
 
 // ============================================================================
 // Custom Fonts Configuration
+// 中英文最佳字體組合：
+//   標題/內文  → Inter（英數優先）+ Noto Sans TC（中文）+ 系統字型
+//   程式碼    → JetBrains Mono（業界最佳 coding 字體）
+//
+// 原理：CSS 字體堆疊的 fallback 機制會讓 Inter 優先渲染英文/數字字形
+//       （其不含 CJK 字元），自動回落到 Noto Sans TC 渲染中文，
+//       兩者視覺重量高度吻合，是業界公認的中英混排最佳解。
 // ============================================================================
+
+// Google Fonts 載入：Inter（英文/UI）+ Noto Sans TC（繁體中文）
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
 :root {
-  --headerFont: "Taipei Sans TC", "Noto Sans TC", sans-serif !important;
-  --bodyFont: "Noto Sans TC", sans-serif !important;
-  --codeFont: "JetBrains Mono", monospace !important;
-  --font-monospace: "JetBrains Mono", monospace !important;
+  // 標題：Inter 負責英文，Noto Sans TC 負責中文，其後系統字型保底
+  --headerFont: "Inter", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei",
+    "Noto Sans CJK TC", sans-serif !important;
+
+  // 內文：同上，Inter 提供優質英數字形，Noto 補全中文
+  --bodyFont: "Inter", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei",
+    "Noto Sans CJK TC", sans-serif !important;
+
+  // 程式碼：JetBrains Mono 優先，後備標準等寬字型
+  --codeFont: "JetBrains Mono", "Fira Code", "Cascadia Code", "Source Code Pro",
+    "Consolas", monospace !important;
+  --font-monospace: var(--codeFont) !important;
 }
 
 // 強制覆寫外部主題外掛 (如 Dracula) 寫死的高權重 CSS 規則
 html body {
   font-family: var(--bodyFont) !important;
+  // 中英混排最佳行高：1.8 讓中文字呼吸感充足，英文段落也不擁擠
+  line-height: 1.8 !important;
+  // 標準字距（勿調整負值，中文字形會崩壞）
+  letter-spacing: 0.01em;
+  // 優先使用字型內建的標點壓縮功能
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  // 啟用字型的子像素渲染，讓細體字更清晰
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 h1, h2, h3, h4, h5, h6,
 html body h1, html body h2, html body h3, html body h4, html body h5, html body h6 {
   font-family: var(--headerFont) !important;
+  // 標題行高較緊：1.3 讓標題更有份量感
+  line-height: 1.3 !important;
+  // 標題加微量字距，增加「精品科技感」
+  letter-spacing: 0.02em;
+  font-feature-settings: "kern" 1, "liga" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 html body code, html body pre, code, pre, .math {
   font-family: var(--codeFont) !important;
+  // 程式碼字距設為 0，避免等寬排列跑位
+  letter-spacing: 0;
+  // 開啟連字功能（= !=  -> => 等程式常用符號）
+  font-feature-settings: "liga" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+// 正文段落補充排版最佳化
+article p, article li, article td {
+  // 中文段落換行優化：避免孤行與行末的奇怪斷點
+  overflow-wrap: break-word;
+  word-break: break-word;
+  // CSS text-wrap: pretty 讓行末更自然（現代瀏覽器支援）
+  text-wrap: pretty;
 }
 
 // put your custom CSS here!
@@ -266,4 +316,4 @@ button.toc-header h3 {
     background-color: color-mix(in srgb, var(--lightgray) 30%, transparent); /* 表頭加上淺色背景方便辨識 */
     font-weight: 600;
   }
-}
+
