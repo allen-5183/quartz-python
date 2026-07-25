@@ -474,6 +474,12 @@ export async function handleBuild(argv) {
         await serveHandler(req, res, {
           public: argv.output,
           directoryListing: false,
+          // Disable cleanUrls so that explicit .html paths are served as-is.
+          // This is needed for the custom Chinese/non-ASCII URL routing above
+          // to work correctly on Windows (req.url is set to the decoded
+          // /folder/index.html path, which must NOT be further stripped to
+          // /folder/index by serve-handler's cleanUrls logic).
+          cleanUrls: false,
           headers: [
             {
               source: "**/*.*",
@@ -512,19 +518,28 @@ export async function handleBuild(argv) {
       }
 
       let fp = req.url?.split("?")[0] ?? "/"
+      // Decode URL-encoded path so that Chinese/non-ASCII folder names
+      // (e.g. /0.-%E8%87%AA%E5%8B%95%E5%8C%96/) can be matched against
+      // the actual file-system paths under argv.output.
+      let fpDecoded
+      try {
+        fpDecoded = decodeURIComponent(fp)
+      } catch {
+        fpDecoded = fp
+      }
 
       // handle redirects
       if (fp.endsWith("/")) {
         // /trailing/
         // does /trailing/index.html exist? if so, serve it
-        const indexFp = path.posix.join(fp, "index.html")
+        const indexFp = path.posix.join(fpDecoded, "index.html")
         if (fs.existsSync(path.posix.join(argv.output, indexFp))) {
-          req.url = fp
+          req.url = indexFp
           return serve()
         }
 
         // does /trailing.html exist? if so, redirect to /trailing
-        let base = fp.slice(0, -1)
+        let base = fpDecoded.slice(0, -1)
         if (path.extname(base) === "") {
           base += ".html"
         }
@@ -533,18 +548,25 @@ export async function handleBuild(argv) {
         }
       } else {
         // /regular
+        let base = fpDecoded
+        
         // does /regular.html exist? if so, serve it
-        let base = fp
-        if (path.extname(base) === "") {
-          base += ".html"
+        // We explicitly check .html first without relying on path.extname()
+        // because folder notes or slugs might contain dots (e.g. "1. Python").
+        let htmlFp = base + ".html"
+        if (fs.existsSync(path.posix.join(argv.output, htmlFp))) {
+          req.url = htmlFp
+          return serve()
         }
+        
+        // does the exact file exist?
         if (fs.existsSync(path.posix.join(argv.output, base))) {
-          req.url = fp
+          req.url = base
           return serve()
         }
 
         // does /regular/index.html exist? if so, redirect to /regular/
-        let indexFp = path.posix.join(fp, "index.html")
+        let indexFp = path.posix.join(fpDecoded, "index.html")
         if (fs.existsSync(path.posix.join(argv.output, indexFp))) {
           return redirect(fp + "/")
         }

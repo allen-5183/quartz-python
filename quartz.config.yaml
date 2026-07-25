@@ -1,13 +1,13 @@
 # yaml-language-server: $schema=./quartz/plugins/quartz-plugins.schema.json
 configuration:
-  pageTitle: Python程式設計與AI應用班
+  pageTitle: 課程名稱： Python 程式語言
   pageTitleSuffix: ""
   enableSPA: false
   enablePopovers: true
   analytics:
     provider: plausible
   locale: zh-TW
-  baseUrl: obsidian-blog-a9w.pages.dev
+  baseUrl: quartz-python.pages.dev
   ignorePatterns:
     - "**/筆記軟件/**"
     - "**/每日筆記/**"

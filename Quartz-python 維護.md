@@ -1,5 +1,12 @@
 # Quartz-python 維護
 
+
+## 本機啟動
+
+1. 修改完後，本機先做測試
+2. 等待雲端同步完成
+3. 執行 `npx quartz build --serve`
+
 ## 網站樣板複製
 
 1. 複製 `quartz` 專案
@@ -69,17 +76,18 @@
 
 ## 日後更新網站
 
-1. 刪除 `c:\cloud\project\quartz-python\content` 下的所有資料
+1. 刪除 `c:\cloud\project\quartz-python\content` 下的所有資料，但保留所有資料夾下的 `index.md` 文件。
 
-   ```bash
-   attrib +h "c:\cloud\project\quartz-python\content\index.md" && del /S /Q "c:\cloud\project\quartz-python\content\*" && for /D %p in ("c:\cloud\project\quartz-python\content\*") do rmdir /S /Q "%p" & attrib -h "c:\cloud\project\quartz-python\content\index.md"
+   ```cmd
+   attrib +h "c:\cloud\project\quartz-python\content\index.md" /S && del /S /Q "c:\cloud\project\quartz-python\content\*" && attrib -h "c:\cloud\project\quartz-python\content\index.md" /S && for /f "delims=" %d in ('dir /s /b /ad "c:\cloud\project\quartz-python\content" ^| findstr /i /e "\assets"') do rmdir /s /q "%d"
    ```
 
 2. 接入 `Obsidian Vault`
    將 `Python Vault` 內容放入 `quartz` 專案下的 `content`：
 
-   ```bash
+   ```cmd
    robocopy "C:\Users\allen\Obsidian Vault\Python Vault" "C:\cloud\project\quartz-python\content" /MIR /XD ".obsidian" "模板" /XF "index.md"
+   rmdir /s /q "C:\cloud\project\quartz-python\content\模板"
    ```
 
    參數說明：
@@ -146,4 +154,10 @@
 | **程式連字** | 未開啟 | 開啟（`->`, `=>`, `!=` 等自動合字） |
 
 修改 `quartz\styles\custom.scss`
+
+
+
+
+---
+
 
