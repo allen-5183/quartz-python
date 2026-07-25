@@ -102,8 +102,11 @@
    git commit -m "update notes"
    git push
    ```
-4. `Cloudflare` 會自動重新部署。
+4. [Cloudflare](https://dash.cloudflare.com/login)
+   會自動重新部署。
    幾十秒後網站更新。
+
+   >`https://quartz-python.pages.dev/`
 
 ## 注意事項
 
