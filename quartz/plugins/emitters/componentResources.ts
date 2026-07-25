@@ -6,6 +6,8 @@ import { QuartzEmitterPlugin } from "../types"
 import spaRouterScript from "../../components/scripts/spa.inline"
 // @ts-ignore
 import popoverScript from "../../components/scripts/popover.inline"
+// @ts-ignore
+import tableCopyScript from "../../components/scripts/tableCopy.inline"
 import baseStyles from "../../styles/base.scss"
 import customStyles from "../../styles/custom.scss"
 import popoverStyle from "../../components/styles/popover.scss"
@@ -89,6 +91,24 @@ function addGlobalPageResources(ctx: BuildCtx, componentResources: ComponentReso
     componentResources.afterDOMLoaded.push(popoverScript)
     componentResources.css.push(popoverStyle)
   }
+
+  // 為所有 Markdown 表格加入複製按鈕
+  componentResources.afterDOMLoaded.push(tableCopyScript)
+
+  // 不蒜子 (Busuanzi) 瀏覽人數計數器
+  componentResources.afterDOMLoaded.push(`
+    const loadBusuanzi = () => {
+      const oldScript = document.getElementById('busuanzi-script');
+      if (oldScript) oldScript.remove();
+      const script = document.createElement('script');
+      script.id = 'busuanzi-script';
+      script.src = 'https://bsz.ezoke.cn/bsz.pure.mini.js';
+      script.async = true;
+      document.head.appendChild(script);
+    };
+    loadBusuanzi();
+    document.addEventListener('nav', loadBusuanzi);
+  `)
 
   if (cfg.analytics?.provider === "google") {
     const tagId = cfg.analytics.tagId

@@ -348,17 +348,7 @@ var Footer_default = ((opts) => {
     const year = (/* @__PURE__ */ new Date()).getFullYear();
     const links = opts?.links ?? [];
     return /* @__PURE__ */ u2("footer", { class: `${displayClass ?? ""}`, children: [
-      /* @__PURE__ */ u2("p", { children: [
-        i18n(cfg?.locale ?? "en-US").components.footer.createdWith,
-        " ",
-        /* @__PURE__ */ u2("a", { href: "https://quartz.jzhao.xyz/", children: [
-          "Quartz",
-          version ? ` v${version}` : ""
-        ] }),
-        " \xA9",
-        " ",
-        year
-      ] }),
+      /* @__PURE__ */ u2("p", { children: "Created By Naruhito" }),
       /* @__PURE__ */ u2("ul", { children: Object.entries(links).map(([text, link]) => /* @__PURE__ */ u2("li", { children: /* @__PURE__ */ u2("a", { href: link, children: text }) })) })
     ] });
   };

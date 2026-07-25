@@ -552,13 +552,11 @@ var ContentMeta_default = ((opts) => {
         }
       }
       if (options.showReadingTime) {
-        const { minutes, words: _words } = (0, import_reading_time.default)(text);
-        const locale = cfg.locale || "en-US";
-        const i18nData = i18n(locale);
-        const displayedTime = i18nData.components.contentMeta.readingTime({
-          minutes: Math.ceil(minutes)
-        });
-        segments.push(/* @__PURE__ */ u2("span", { children: displayedTime }));
+        segments.push(/* @__PURE__ */ u2("span", { id: "busuanzi_container_page_pv", children: [
+          "\u95B2\u89BD\u4EBA\u6578 ",
+          /* @__PURE__ */ u2("span", { id: "busuanzi_value_page_pv", children: "--" }),
+          " \u6B21"
+        ] }));
       }
       return /* @__PURE__ */ u2("p", { "show-comma": options.showComma, class: classNames(displayClass, "content-meta"), children: segments });
     } else {
