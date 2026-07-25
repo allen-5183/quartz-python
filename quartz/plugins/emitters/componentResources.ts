@@ -95,15 +95,15 @@ function addGlobalPageResources(ctx: BuildCtx, componentResources: ComponentReso
   // 為所有 Markdown 表格加入複製按鈕
   componentResources.afterDOMLoaded.push(tableCopyScript)
 
-  // 不蒜子 (Busuanzi) 瀏覽人數計數器
+  // 不蒜子 (Busuanzi / Vercount) 瀏覽人數計數器
   componentResources.afterDOMLoaded.push(`
     const loadBusuanzi = () => {
       const oldScript = document.getElementById('busuanzi-script');
       if (oldScript) oldScript.remove();
       const script = document.createElement('script');
       script.id = 'busuanzi-script';
-      script.src = 'https://bsz.ezoke.cn/bsz.pure.mini.js';
-      script.async = true;
+      script.src = 'https://vercount.one/js';
+      script.defer = true;
       document.head.appendChild(script);
     };
     loadBusuanzi();
