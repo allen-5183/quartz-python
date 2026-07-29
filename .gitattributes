@@ -1,1 +1,5 @@
 * text=auto eol=lf
+
+# Windows 批次檔必須保留 CRLF：
+# cmd.exe 在解析 LF-only 的 .bat 時，goto/標籤與 ( ) 區塊可能誤判。
+*.bat text eol=crlf
