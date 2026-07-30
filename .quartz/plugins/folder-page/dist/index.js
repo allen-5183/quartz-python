@@ -444,6 +444,19 @@ PageList.css = `
 
 .section > .tags {
   margin: 0;
+  padding-left: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.4rem;
+}
+
+.section > .tags li {
+  white-space: nowrap;
+}
+
+.section > .tags a.tag-link {
+  font-size: 0.75rem;
 }
 `;
 
