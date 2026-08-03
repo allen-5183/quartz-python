@@ -316,6 +316,33 @@ button.toc-header h3 {
 }
 
 // ============================================================================
+// Callout Icon/Title Color Fix (修復 dracula-for-obsidian 佈景主題造成摺疊區塊
+// 圖示與標題文字失色的問題)
+//
+// dracula-for-obsidian 主題會用 !important 覆寫每種 callout 的 --color，改參照
+// --callout-example / --callout-info 等 RGB 變數，但主題產生的 CSS 從未實際定義
+// 這些變數。導致 --color 在 var() 計算時失效：圖示的 background-color 因此變成
+// transparent（完全消失），標題文字則掉回預設文字色（失去強調色），使摺疊區塊
+// 看起來像沒有圖示、沒有摺疊箭頭的純色方塊。這裡以更高特異度 + !important 復原
+// 各類型原本的顏色，讓摺疊/展開的外觀與 Obsidian 一致。
+// ============================================================================
+.callout.callout {
+  &[data-callout] { --color: #448aff !important; }
+  &[data-callout="abstract"] { --color: #00b0ff !important; }
+  &[data-callout="info"],
+  &[data-callout="todo"] { --color: #00b8d4 !important; }
+  &[data-callout="tip"] { --color: #00bfa5 !important; }
+  &[data-callout="success"] { --color: #09ad7a !important; }
+  &[data-callout="question"] { --color: #dba642 !important; }
+  &[data-callout="warning"] { --color: #db8942 !important; }
+  &[data-callout="failure"],
+  &[data-callout="danger"],
+  &[data-callout="bug"] { --color: #db4242 !important; }
+  &[data-callout="example"] { --color: #7a43b5 !important; }
+  &[data-callout="quote"] { --color: var(--secondary) !important; }
+}
+
+// ============================================================================
 // Callout Codeblock & Copy Button Fix (修復 Callout 內程式碼區塊右框線與複製按鈕被裁切問題)
 // ============================================================================
 .callout {
