@@ -120,6 +120,8 @@ export default (() => {
 		
         <script src="/static/sidebar-resize.js"></script>
 		
+        <script src="/static/code-toggle.js"></script>
+		
       </head>
     )
   }

@@ -10,11 +10,17 @@ import {
 (function () {
   function getSlugFromUrl() {
     var slug = getFullSlugFromUrl();
+    try {
+      slug = decodeURIComponent(slug);
+    } catch (e) {}
     var base = getBasePath();
     if (base && slug.startsWith(base.replace(/^\//, ""))) {
       slug = slug.slice(base.replace(/^\//, "").length);
       if (slug.startsWith("/")) slug = slug.slice(1);
     }
+    try {
+      slug = decodeURIComponent(slug);
+    } catch (e) {}
     return slug;
   }
 
@@ -86,43 +92,80 @@ import {
       return resolved || fallback;
     }
 
-    async function renderGraph(graph, fullSlug, renderGeneration) {
-      var slug = simplifySlug(fullSlug);
-      if (slug === "") slug = "index";
-      var visited = getVisited();
-      removeAllChildren(graph);
-
-      if (renderGeneration !== undefined && renderGeneration !== currentRenderGeneration) {
-        console.log("[Graph] Stale render, skipping");
-        return function () {};
-      }
-
-      var config = JSON.parse(graph.dataset["cfg"] || "{}");
-      var enableDrag = config.drag;
-      var enableZoom = config.zoom;
-      var depth = config.depth;
-      var scale = config.scale || 1;
-      var repelForce = config.repelForce || 0.5;
-      var centerForce = config.centerForce || 0.3;
-      var linkDistance = config.linkDistance || 30;
-      var fontSize = config.fontSize || 0.6;
-      var opacityScale = config.opacityScale || 1;
-      var removeTags = config.removeTags || [];
-      var showTags = config.showTags;
-      var focusOnHover = config.focusOnHover;
-      var enableRadial = config.enableRadial;
-
-      var data;
-      try {
-        var dataRaw = await fetchData;
-        data = new Map();
-        for (var key in dataRaw) {
-          data.set(simplifySlug(key), dataRaw[key]);
+    function safeDecode(str: string): string {
+    try {
+      return decodeURIComponent(str)
+    } catch (_) {}
+    try {
+      const decoded = str.replace(/(%[0-9A-Fa-f]{2})+/g, (match) => {
+        try {
+          return decodeURIComponent(match)
+        } catch (_) {
+          return ""
         }
-      } catch (err) {
-        console.error("[Graph] Error loading data:", err);
-        return function () {};
+      })
+      if (decoded && decoded.trim().length > 0) return decoded
+    } catch (_) {}
+    return str
+  }
+
+  async function renderGraph(container: HTMLElement, currentSlug: SimpleSlug, curRenderId?: number) {
+    var curSlug = getSlug(currentSlug);
+    if (curSlug === "") {
+      curSlug = "index" as SimpleSlug;
+    }
+    const visited = getVisited();
+
+    if (container.firstChild) {
+      removeAllChildren(container);
+    }
+
+    if (curRenderId !== undefined && curRenderId !== renderId) {
+      console.log("[Graph] Stale render, skipping");
+      return () => {};
+    }
+
+    const cfg: GraphConfig = JSON.parse(container.dataset.cfg || "{}");
+    const enableDrag = cfg.drag;
+    const enableZoom = cfg.zoom;
+    const depth = cfg.depth;
+    const globalScale = cfg.scale || 1;
+    const repelForce = cfg.repelForce || 0.5;
+    const centerForce = cfg.centerForce || 0.3;
+    const linkDistance = cfg.linkDistance || 30;
+    const fontSize = cfg.fontSize || 0.6;
+    const opacityScale = cfg.opacityScale || 1;
+    const removeTags = cfg.removeTags || [];
+    const showTags = cfg.showTags;
+    const focusOnHover = cfg.focusOnHover;
+    const enableRadial = cfg.enableRadial;
+
+    let graphData: Map<SimpleSlug, ContentDetails>;
+    try {
+      const rawData = await fetchData;
+      graphData = new Map();
+      for (const [key, value] of Object.entries(rawData)) {
+        let cleanKey = getSlug(key as SimpleSlug);
+        try {
+          cleanKey = decodeURIComponent(cleanKey) as SimpleSlug;
+        } catch (_) {}
+        graphData.set(cleanKey, value);
+        if (value.title) {
+          let tk = getSlug(value.title as SimpleSlug);
+          try {
+            tk = decodeURIComponent(tk) as SimpleSlug;
+          } catch (_) {}
+          if (!graphData.has(tk)) graphData.set(tk, value);
+          if (!graphData.has(value.title as SimpleSlug)) graphData.set(value.title as SimpleSlug, value);
+        }
+        const pArr = cleanKey.split("/");
+        const lp = pArr[pArr.length - 1] as SimpleSlug;
+        if (lp && !graphData.has(lp)) graphData.set(lp, value);
       }
+    } catch (err) {
+      console.error("[Graph] Error loading data:", err);
+      return () => {};
+    }  }
 
       var width = graph.offsetWidth;
       var height = Math.max(graph.offsetHeight, 250);
@@ -135,6 +178,9 @@ import {
         var outgoing = details.links || [];
         for (var i = 0; i < outgoing.length; i++) {
           var dest = simplifySlug(outgoing[i]);
+          try {
+            dest = decodeURIComponent(dest);
+          } catch (e) {}
           if (validLinks.has(dest)) {
             links.push({ source: source, target: dest });
           }
@@ -146,6 +192,9 @@ import {
             var tag = tags[i];
             if (removeTags.indexOf(tag) === -1) {
               var tagSlug = simplifySlug("tags/" + tag);
+              try {
+                tagSlug = decodeURIComponent(tagSlug);
+              } catch (e) {}
               if (allTags.indexOf(tagSlug) === -1) {
                 allTags.push(tagSlug);
               }
@@ -191,7 +240,17 @@ import {
       var nodeMap = new Map();
       neighbourhood.forEach(function (url) {
         var isTag = url.startsWith("tags/");
-        var text = isTag ? "#" + url.substring(5) : data.get(url)?.title || url;
+        var titleRaw = data.get(url)?.title;
+        var text = isTag
+          ? "#" + url.substring(5)
+          : titleRaw ||
+            (function () {
+              try {
+                return decodeURIComponent(url);
+              } catch (e) {
+                return url;
+              }
+            })();
         var nodeTags = isTag ? [] : data.get(url)?.tags || [];
         var node = {
           id: url,
