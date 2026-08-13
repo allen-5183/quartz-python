@@ -1,9 +1,10 @@
 @echo off
 rem ============================================================
 rem  quartz-python 一鍵發布腳本
-rem    1. 從 Obsidian「Python Vault」鏡像同步到 content\
-rem    2. npx quartz build
-rem    3. git add / commit / push  → Cloudflare Pages 自動部署
+rem    1. 清空 content\（保留各層 index.md），並清掉孤兒 assets 資料夾
+rem    2. 從 Obsidian「Python Vault」鏡像同步到 content\
+rem    3. npx quartz build
+rem    4. git add / commit / push  → Cloudflare Pages 自動部署
 rem ============================================================
 
 rem 本檔為 UTF-8 (無 BOM) 編碼，內含中文路徑，
@@ -17,6 +18,20 @@ set "PROJECT=C:\cloud\project\quartz-python"
 set "VAULT=C:\Users\allen\Obsidian Vault\Python Vault"
 
 cd /d "%PROJECT%" || goto :fail
+
+echo ====================
+echo Clean Content
+echo ====================
+
+rem 先清空 content\（保留各層 index.md），並清掉孤兒 assets 資料夾。
+rem robocopy /MIR 理論上會自己刪多餘檔案，但在 Google Drive 虛擬/串流磁碟上
+rem 有時會因檔案鎖定或虛擬路徑問題而漏刪（尤其是筆記改名後留下的舊 assets 資料夾），
+rem 所以比照 Quartz-python 維護.md 記錄的手動流程，先做一次全清再交給 robocopy 同步。
+attrib +h "%PROJECT%\content\index.md" /S
+del /S /Q "%PROJECT%\content\*" >nul
+attrib -h "%PROJECT%\content\index.md" /S
+for /f "delims=" %%d in ('dir /s /b /ad "%PROJECT%\content" ^| findstr /i /e "\assets"') do rmdir /s /q "%%d"
+ver >nul
 
 echo ====================
 echo Sync Vault
