@@ -163,4 +163,50 @@
 
 ---
 
+## 程式碼範例全域保護與密碼控管說明
 
+本專案針對 Markdown 筆記中的範例程式碼區塊（`> [!example]` callout）提供了**權限密碼驗證**與**全域統一切換**功能。
+
+### 1. 密碼存放位置與修改方式
+
+- **密碼儲存檔案**：[`public/static/code-toggle.js`](file:///c:/cloud/project/quartz-python/public/static/code-toggle.js)（第 11 行）
+- **預設密碼設定**：
+  ```javascript
+  const CORRECT_PASSWORD = "1234"
+  ```
+
+#### 方式 A：使用 Python 工具自動修改（推薦）
+專案根目錄提供專用 Python 工具 [`change_password.py`](file:///c:/cloud/project/quartz-python/change_password.py)：
+
+```bash
+# 1. 互動式修改（會自動顯示目前密碼並提示輸入新密碼）：
+python change_password.py
+
+# 2. 或直接於 Terminal / CMD 帶入新密碼：
+python change_password.py myNewPassword123
+```
+
+#### 方式 B：手動修改
+1. 開啟 [`public/static/code-toggle.js`](file:///c:/cloud/project/quartz-python/public/static/code-toggle.js)。
+2. 將第 11 行的 `const CORRECT_PASSWORD = "1234"` 修改為新密碼。
+3. 存檔後重新發布即可生效。
+
+---
+
+### 2. 功能運作機制與防繞過保護
+
+| 功能項目 | 說明與實現原理 |
+| :--- | :--- |
+| **全域統一控制器** | 畫面右下角提供浮動切換按鈕（`[ 展開程式碼 🔒 ]` / `[ 收合程式碼 ]`），一鍵切換全頁面所有範例程式碼。 |
+| **密碼驗證 (Modal)** | 未驗證時，點擊右下角按鈕或點擊程式碼標題列會自動跳出 Modal 視窗，密碼驗證成功後解鎖。 |
+| **雙層單一區塊硬鎖定** | 1. **CSS 實體鎖定**：對 `.callout[data-callout="example"] .callout-title` 設定 `pointer-events: none !important` 停用點擊，並隱藏折疊箭頭。<br/>2. **JS 全域捕獲攔截**：在 `document` 層級開啓 Capture Phase 捕獲點擊，完全禁止單獨展開，引導至全域控管按鈕。 |
+| **狀態自動記憶** | 通過驗證後，使用者展開或收合程式碼的偏好設定會儲存於 `localStorage`，重新整理頁面時自動維持上一次的切換狀態。 |
+
+---
+
+### 3. 相關技術檔案對照
+
+- **Python 密碼修改腳本**：[`change_password.py`](file:///c:/cloud/project/quartz-python/change_password.py)
+- **前端控制與驗證邏輯**：[`public/static/code-toggle.js`](file:///c:/cloud/project/quartz-python/public/static/code-toggle.js)
+- **鎖定與標籤視覺樣式**：[`quartz/styles/custom.scss`](file:///c:/cloud/project/quartz-python/quartz/styles/custom.scss) （定義 `.is-code-locked` 與 `.is-code-authed` 提示標籤）
+- **頁面全域引入腳本**：[`quartz/components/Head.tsx`](file:///c:/cloud/project/quartz-python/quartz/components/Head.tsx) （引入 `<script src="/static/code-toggle.js"></script>`）
