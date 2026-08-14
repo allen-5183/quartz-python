@@ -169,7 +169,7 @@
 
 ### 1. 密碼存放位置與修改方式
 
-- **密碼儲存檔案**：[`public/static/code-toggle.js`](file:///c:/cloud/project/quartz-python/public/static/code-toggle.js)（第 11 行）
+- **密碼儲存檔案**：[`quartz/static/code-toggle.js`](file:///c:/cloud/project/quartz-python/quartz/static/code-toggle.js)（第 11 行）
 - **預設密碼設定**：
   ```javascript
   const CORRECT_PASSWORD = "1234"
@@ -187,7 +187,7 @@ python change_password.py myNewPassword123
 ```
 
 #### 方式 B：手動修改
-1. 開啟 [`public/static/code-toggle.js`](file:///c:/cloud/project/quartz-python/public/static/code-toggle.js)。
+1. 開啟 [`quartz/static/code-toggle.js`](file:///c:/cloud/project/quartz-python/quartz/static/code-toggle.js)。
 2. 將第 11 行的 `const CORRECT_PASSWORD = "1234"` 修改為新密碼。
 3. 存檔後重新發布即可生效。
 
@@ -207,6 +207,6 @@ python change_password.py myNewPassword123
 ### 3. 相關技術檔案對照
 
 - **Python 密碼修改腳本**：[`change_password.py`](file:///c:/cloud/project/quartz-python/change_password.py)
-- **前端控制與驗證邏輯**：[`public/static/code-toggle.js`](file:///c:/cloud/project/quartz-python/public/static/code-toggle.js)
+- **前端控制與驗證邏輯**：[`quartz/static/code-toggle.js`](file:///c:/cloud/project/quartz-python/quartz/static/code-toggle.js)
 - **鎖定與標籤視覺樣式**：[`quartz/styles/custom.scss`](file:///c:/cloud/project/quartz-python/quartz/styles/custom.scss) （定義 `.is-code-locked` 與 `.is-code-authed` 提示標籤）
 - **頁面全域引入腳本**：[`quartz/components/Head.tsx`](file:///c:/cloud/project/quartz-python/quartz/components/Head.tsx) （引入 `<script src="/static/code-toggle.js"></script>`）

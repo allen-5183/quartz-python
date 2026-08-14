@@ -78,3 +78,12 @@ title: 2. Antigravity 環境中使用 MCP MySQL 與 MSSQL 服務
 2. 重寫 `publish.bat`：所有 `rem` 註解、`echo` 狀態與錯誤訊息改成純英文 ASCII，只保留像 `模板` 這種必要的中文參數值。
 3. 在 `Sync Vault` 之後新增一道 **Safety Check**：直接數 `content\` 底下 `.md` 檔案數量，低於 50 個就視為同步異常、直接中止，不會進入 `quartz build` 或 `git commit/push`。這是最後一道防線——就算未來又出現其他未知問題導致同步失敗，也不會再讓空的網站內容被發布上線。
 4. 提醒：改完 `publish.bat` 這類會自動 `git push` 的腳本後，最好先用「跑到 push 前一步就停下來」的方式做過幾次穩定性測試，再實際串上 `git commit/push`，避免像這次一樣直接把壞掉的中間狀態推上線。
+
+
+
+## prompt
+
+```plaintext
+這個專案可以幫我打包變成一個 Quartz 網站用的公版嗎，另外產生一個新專案叫做 Quartz，拷貝至用這個 Quartz 網站用的公版 (Quartz-template)，修改專案資料夾名稱後(例如 Quartz-django)，爾後我只要將 Obsidian 的某一倉庫下(例如 django) 的 content 資料夾 ，拷貝到 Quartz-django 專案下的 content 資料夾內，就可以用
+```
+

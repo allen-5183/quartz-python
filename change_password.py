@@ -12,7 +12,7 @@ if sys.platform == "win32":
 
 # 設定 code-toggle.js 檔案路徑
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-CODE_TOGGLE_PATH = os.path.join(SCRIPT_DIR, "public", "static", "code-toggle.js")
+CODE_TOGGLE_PATH = os.path.join(SCRIPT_DIR, "quartz", "static", "code-toggle.js")
 
 def get_current_password(content):
     """提取當前密碼"""

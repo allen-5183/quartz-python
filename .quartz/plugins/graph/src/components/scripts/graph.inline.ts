@@ -92,6 +92,22 @@ import {
       return resolved || fallback;
     }
 
+    // Same trick as resolveColor(), but for font-family values that may
+    // themselves be chains of var() (e.g. --bodyFont: var(--font-text, var(...))).
+    // PixiJS/Canvas can't parse an unresolved "var(...)" string as a font-family,
+    // so without this it silently falls back to the browser's default font.
+    function resolveFontFamily(value, fallback) {
+      if (!value) return fallback;
+      var el = document.createElement("div");
+      el.style.fontFamily = value;
+      el.style.position = "absolute";
+      el.style.visibility = "hidden";
+      document.body.appendChild(el);
+      var resolved = getComputedStyle(el).fontFamily;
+      el.remove();
+      return resolved || fallback;
+    }
+
     function safeDecode(str: string): string {
     try {
       return decodeURIComponent(str)
@@ -284,7 +300,7 @@ import {
       var lightgray = resolveColor(styles.getPropertyValue("--lightgray").trim(), "#d4d4d4");
       var dark = resolveColor(styles.getPropertyValue("--dark").trim(), "#1a1a1a");
       var light = resolveColor(styles.getPropertyValue("--light").trim(), "#f5f5f5");
-      var bodyFont = styles.getPropertyValue("--bodyFont").trim() || "inherit";
+      var bodyFont = resolveFontFamily(styles.getPropertyValue("--bodyFont").trim(), "sans-serif");
 
       var app = new PIXI.Application();
       await app.init({
