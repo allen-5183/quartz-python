@@ -95,27 +95,15 @@ function addGlobalPageResources(ctx: BuildCtx, componentResources: ComponentReso
   // 為所有 Markdown 表格加入複製按鈕
   componentResources.afterDOMLoaded.push(tableCopyScript)
 
-  // 不蒜子 (Busuanzi / Vercount) 瀏覽人數計數器（附帶 F5 重整防重複加算機制）
+  // 不蒜子 (Busuanzi / Vercount) 瀏覽人數計數器
+  // vercount.one 本身在伺服器端就有防止同一訪客短時間內重複加算的機制，
+  // 這裡只需要在每次換頁時重新注入腳本，讓它重新掃描該頁的
+  // busuanzi_value_page_pv 節點並抓取正確數字即可，不要自己在前端
+  // 用 sessionStorage/localStorage 疊一層快取——那層快取曾經把載入過程中
+  // 出現的錯誤中間值當成正確數字存起來，導致重新整理/重新部署後顯示舊的、
+  // 錯誤的次數。
   componentResources.afterDOMLoaded.push(`
     const loadBusuanzi = () => {
-      const pathKey = "pv_session_" + window.location.pathname;
-      const isAlreadyCounted = sessionStorage.getItem(pathKey);
-
-      // 若在同一個瀏覽分頁 Session 中已計數過（如按 F5 重整），不發送重複 +1 請求
-      if (isAlreadyCounted) {
-        const cachedCount = localStorage.getItem("pv_cache_" + window.location.pathname);
-        if (cachedCount) {
-          const valEl = document.getElementById("busuanzi_value_page_pv");
-          const boxEl = document.getElementById("busuanzi_container_page_pv");
-          if (valEl) valEl.textContent = cachedCount;
-          if (boxEl) boxEl.style.display = "inline";
-        }
-        return;
-      }
-
-      // 初次開啟此頁，標記 Session 已存取並發送統計
-      sessionStorage.setItem(pathKey, "counted");
-
       const oldScript = document.getElementById('busuanzi-script');
       if (oldScript) oldScript.remove();
       const script = document.createElement('script');
@@ -123,19 +111,6 @@ function addGlobalPageResources(ctx: BuildCtx, componentResources: ComponentReso
       script.src = 'https://vercount.one/js';
       script.defer = true;
       document.head.appendChild(script);
-
-      // 監聽數字更新並快取，供未來刷新時直接顯示舊數字
-      setTimeout(() => {
-        const valEl = document.getElementById("busuanzi_value_page_pv");
-        if (valEl) {
-          const observer = new MutationObserver(() => {
-            if (valEl.textContent && valEl.textContent !== "--") {
-              localStorage.setItem("pv_cache_" + window.location.pathname, valEl.textContent);
-            }
-          });
-          observer.observe(valEl, { childList: true, characterData: true, subtree: true });
-        }
-      }, 300);
     };
 
     loadBusuanzi();
